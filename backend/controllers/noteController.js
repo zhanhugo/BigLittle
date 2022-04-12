@@ -5,7 +5,7 @@ import asyncHandler from "express-async-handler";
 // @route   GET /api/notes
 // @access  Private
 const getNotes = asyncHandler(async (req, res) => {
-  const notes = await Note.find({ user: req.user._id });
+  const notes = await Note.find({});
   res.json(notes);
 });
 
@@ -33,9 +33,8 @@ const CreateNote = asyncHandler(async (req, res) => {
   if (!title || !content || !category) {
     res.status(400);
     throw new Error("Please Fill all the feilds");
-    return;
   } else {
-    const note = new Note({ user: req.user._id, title, content, category });
+    const note = new Note({ user: req.user._id, name: req.user.name, email: req.user.email, pic: req.user.pic, title, content, category });
 
     const createdNote = await note.save();
 

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { Accordion, Badge, Button, Card } from "react-bootstrap";
+import { Badge, Button, Card } from "react-bootstrap";
+import { Grid, useMediaQuery, useTheme } from '@mui/material';
 import MainScreen from "../../components/MainScreen";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
@@ -18,6 +19,40 @@ function MyNotes({ history, search }) {
   // const filteredNotes = notes.filter((note) =>
   //   note.title.toLowerCase().includes(search.toLowerCase())
   // );
+
+  const theme = useTheme();
+
+  const screenExtraLarge = useMediaQuery(theme.breakpoints.only('xl'));
+  const screenLarge = useMediaQuery(theme.breakpoints.only('lg'));
+  const screenMedium = useMediaQuery(theme.breakpoints.only('md'));
+  const screenSmall = useMediaQuery(theme.breakpoints.only('sm'));
+  const screenExtraSmall = useMediaQuery(theme.breakpoints.only('xs'));
+  const screenNarrow = useMediaQuery('(max-width:340px)');
+
+  const getPostWidth = () => {
+    if (screenExtraLarge) {
+      console.log('xl');
+      return 4;
+    } else if (screenNarrow) {
+      console.log('n');
+      return 12;
+    } else if (screenLarge) {
+      console.log('l');
+      return 6;
+    } else if (screenMedium) {
+      console.log('m');
+      return 12;
+    } else if (screenSmall) {
+      console.log('s');
+      return 12;
+    } else if (screenExtraSmall) {
+      console.log('xs');
+      return 12;
+    } else {
+      console.log('else');
+      return 6;
+    }
+  }
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -60,23 +95,26 @@ function MyNotes({ history, search }) {
       {console.log(notes)}
       <Link to="/createnote">
         <Button style={{ marginLeft: 10, marginBottom: 6 }} size="lg">
-          Create new Note
+          Create new post
         </Button>
       </Link>
-      {error && <ErrorMessage variant="danger">{error}</ErrorMessage>}
-      {errorDelete && (
-        <ErrorMessage variant="danger">{errorDelete}</ErrorMessage>
-      )}
-      {loading && <Loading />}
-      {loadingDelete && <Loading />}
-      {notes &&
-        notes
-          .filter((filteredNote) =>
-            filteredNote.title.toLowerCase().includes(search.toLowerCase())
-          )
-          .reverse()
-          .map((note) => (
-            <Accordion>
+      <Grid container spacing={2}>
+        {error && <ErrorMessage variant="danger">{error}</ErrorMessage>}
+        {errorDelete && (
+          <ErrorMessage variant="danger">{errorDelete}</ErrorMessage>
+        )}
+        {loading && <Loading />}
+        {loadingDelete && <Loading />}
+        {notes &&
+          notes
+            .filter((filteredNote) =>
+              filteredNote.name.toLowerCase().includes(search.toLowerCase()) ||
+              filteredNote.title.toLowerCase().includes(search.toLowerCase()) ||
+              filteredNote.category.toLowerCase().includes(search.toLowerCase())
+            )
+            .reverse()
+            .map((note) => (
+            <Grid container item xs={getPostWidth()}>
               <Card style={{ margin: 10 }} key={note._id}>
                 <Card.Header style={{ display: "flex" }}>
                   <span
@@ -90,47 +128,45 @@ function MyNotes({ history, search }) {
                       fontSize: 18,
                     }}
                   >
-                    <Accordion.Toggle
-                      as={Card.Text}
-                      variant="link"
-                      eventKey="0"
-                    >
-                      {note.title}
-                    </Accordion.Toggle>
+                    {note.name + ": " + note.title}
                   </span>
-
-                  <div>
-                    <Button href={`/note/${note._id}`}>Edit</Button>
-                    <Button
-                      variant="danger"
-                      className="mx-2"
-                      onClick={() => deleteHandler(note._id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </Card.Header>
-                <Accordion.Collapse eventKey="0">
-                  <Card.Body>
-                    <h4>
-                      <Badge variant="success">
-                        Category - {note.category}
-                      </Badge>
-                    </h4>
-                    <blockquote className="blockquote mb-0">
-                      <ReactMarkdown>{note.content}</ReactMarkdown>
-                      <footer className="blockquote-footer">
-                        Created on{" "}
-                        <cite title="Source Title">
-                          {note.createdAt.substring(0, 10)}
-                        </cite>
-                      </footer>
-                    </blockquote>
-                  </Card.Body>
-                </Accordion.Collapse>
-              </Card>
-            </Accordion>
-          ))}
+                    { userInfo !== undefined && note.user === userInfo._id ?
+                      <div>
+                        <Button href={`/note/${note._id}`}>Edit</Button>
+                        <Button
+                          variant="danger"
+                          className="mx-2"
+                          onClick={() => deleteHandler(note._id)}
+                        >
+                          Delete
+                        </Button>
+                      </div> :
+                      <div>
+                        <Button href={`/contact/${note._id}`}>Request Matching</Button>
+                      </div>
+                    }
+                  </Card.Header>
+                    <Card.Body>
+                      <h4>
+                        <Badge variant="success">
+                          Category - {note.category}
+                        </Badge>
+                      </h4>
+                      <blockquote className="blockquote mb-0">
+                        <ReactMarkdown>{note.content}</ReactMarkdown>
+                        <img src={note.pic} alt={""} className="profilePic" />
+                        <footer className="blockquote-footer">
+                          Created on{" "}
+                          <cite title="Source Title">
+                            {note.createdAt.substring(0, 10)}
+                          </cite>
+                        </footer>
+                      </blockquote>
+                    </Card.Body>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
     </MainScreen>
   );
 }

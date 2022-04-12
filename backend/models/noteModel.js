@@ -2,6 +2,18 @@ import mongoose from "mongoose";
 
 const noteSchema = mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      rquired: true
+    },
+    pic: {
+      type: String,
+      required: true
+    },
     title: {
       type: String,
       required: true,

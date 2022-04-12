@@ -4,6 +4,9 @@
   min-height: 93vh;
   display: flex;
   padding: 10px 0;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .page {
   width: 100%;

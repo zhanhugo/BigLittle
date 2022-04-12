@@ -5,7 +5,7 @@ import "./Screen.css";
 function MainScreen({ children, title }) {
   return (
     <div className="mainback">
-      <Container>
+      <Container fluid>
         <Row>
           <div className="page">
             {title && (

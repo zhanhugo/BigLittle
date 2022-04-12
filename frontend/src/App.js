@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import LandingPage from "./screens/LandingPage/LandingPage";
 import MyNotes from "./screens/MyNotes/MyNotes";
 import SingleNote from "./screens/SingleNote/SingleNote";
+import Contact from "./screens/MyNotes/Contact";
 import LoginScreen from "./screens/LoginScreen/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen/RegisterScreen";
 import CreateNote from "./screens/SingleNote/CreateNote";
@@ -28,7 +29,8 @@ function App() {
           )}
         />
         <Route path="/note/:id" component={SingleNote} />
-        <Route path="/createnote" component={CreateNote} />;
+        <Route path="/createnote" component={CreateNote} />
+        <Route path="/contact/:id" component={Contact} />
         <Route path="/profile" component={ProfileScreen} />
       </main>
       <Footer />

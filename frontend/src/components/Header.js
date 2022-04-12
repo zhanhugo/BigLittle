@@ -25,8 +25,8 @@ function Header({ setSearch }) {
 
   return (
     <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
-      <Container>
-        <Navbar.Brand href="/">Note Zipper</Navbar.Brand>
+      <Container fluid>
+        <Navbar.Brand href="/">BigLittle</Navbar.Brand>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -37,6 +37,7 @@ function Header({ setSearch }) {
                   type="text"
                   placeholder="Search"
                   className="mr-sm-2"
+                  style={{width: "320px"}}
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </Form>
@@ -45,7 +46,7 @@ function Header({ setSearch }) {
           <Nav>
             {userInfo ? (
               <>
-                <Nav.Link href="/mynotes">My Notes</Nav.Link>
+                <Nav.Link href="/mynotes">My Posts</Nav.Link>
                 <NavDropdown
                   title={`${userInfo.name}`}
                   id="collasible-nav-dropdown"
