@@ -17,6 +17,9 @@
   font-family: "Work Sans", sans-serif;
   padding: 5px 10px;
 }
+.dropdown-toggle::after {
+  display: none !important; 
+}
 
 @media only screen and (min-width: 1200px) {
 }

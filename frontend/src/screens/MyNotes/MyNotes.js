@@ -10,7 +10,7 @@ import { deleteNoteAction, listNotes } from "../../actions/notesActions";
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
 
-function MyNotes({ history, search }) {
+function MyNotes({ history, search, my }) {
   const dispatch = useDispatch();
 
   const noteList = useSelector((state) => state.noteList);
@@ -31,25 +31,18 @@ function MyNotes({ history, search }) {
 
   const getPostWidth = () => {
     if (screenExtraLarge) {
-      console.log('xl');
       return 4;
     } else if (screenNarrow) {
-      console.log('n');
       return 12;
     } else if (screenLarge) {
-      console.log('l');
       return 6;
     } else if (screenMedium) {
-      console.log('m');
       return 12;
     } else if (screenSmall) {
-      console.log('s');
       return 12;
     } else if (screenExtraSmall) {
-      console.log('xs');
       return 12;
     } else {
-      console.log('else');
       return 6;
     }
   }
@@ -91,8 +84,7 @@ function MyNotes({ history, search }) {
   };
 
   return (
-    <MainScreen title={`Welcome Back ${userInfo && userInfo.name}..`}>
-      {console.log(notes)}
+    <MainScreen title={`Welcome Back nigga ${userInfo && userInfo.name}..`}>
       <Link to="/createnote">
         <Button style={{ marginLeft: 10, marginBottom: 6 }} size="lg">
           Create new post
@@ -108,9 +100,12 @@ function MyNotes({ history, search }) {
         {notes &&
           notes
             .filter((filteredNote) =>
-              filteredNote.name.toLowerCase().includes(search.toLowerCase()) ||
-              filteredNote.title.toLowerCase().includes(search.toLowerCase()) ||
-              filteredNote.category.toLowerCase().includes(search.toLowerCase())
+              (!my || filteredNote.user === userInfo._id) &&
+              (
+                filteredNote.name.toLowerCase().includes(search.toLowerCase()) ||
+                filteredNote.title.toLowerCase().includes(search.toLowerCase()) ||
+                filteredNote.category.toLowerCase().includes(search.toLowerCase())
+              )
             )
             .reverse()
             .map((note) => (

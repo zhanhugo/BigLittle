@@ -4,6 +4,15 @@
   align-items: center;
   padding: 20px;
 }
+.circularProfilePic {
+  background-color:#fff;
+  border:1px solid black;    
+  height:40px;
+  width:40px;
+  border-radius:50%;
+  -moz-border-radius:50%;
+  -webkit-border-radius:50%;
+}
 .profileContainer {
   display: flex;
   margin: 20px;

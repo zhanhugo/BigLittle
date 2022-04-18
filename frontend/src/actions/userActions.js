@@ -3,6 +3,9 @@ import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
   USER_LOGOUT,
+  USER_GET_FAIL,
+  USER_GET_REQUEST,
+  USER_GET_SUCCESS,
   USER_REGISTER_FAIL,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
@@ -47,6 +50,34 @@ export const logout = () => async (dispatch) => {
   dispatch({ type: USER_LOGOUT });
 };
 
+export const getUser = (userId) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_GET_REQUEST });
+
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+      },
+    };
+
+    const { data } = await axios.post(
+      "/api/users/",
+      { userId },
+      config
+    );
+
+    dispatch({ type: USER_GET_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: USER_GET_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
 export const register = (name, email, password, pic) => async (dispatch) => {
   try {
     dispatch({ type: USER_REGISTER_REQUEST });
@@ -58,7 +89,7 @@ export const register = (name, email, password, pic) => async (dispatch) => {
     };
 
     const { data } = await axios.post(
-      "/api/users",
+      "/api/users/register",
       { name, pic, email, password },
       config
     );

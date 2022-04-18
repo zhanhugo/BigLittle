@@ -23,9 +23,15 @@ function App() {
         <Route path="/login" component={LoginScreen} />
         <Route path="/register" component={RegisterScreen} />
         <Route
-          path="/mynotes"
+          path="/explore"
           component={({ history }) => (
-            <MyNotes search={search} history={history} />
+            <MyNotes search={search} history={history} my={false}/>
+          )}
+        />
+        <Route
+          path="/myposts"
+          component={({ history }) => (
+            <MyNotes search={search} history={history} my={true}/>
           )}
         />
         <Route path="/note/:id" component={SingleNote} />
