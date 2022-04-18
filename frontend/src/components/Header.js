@@ -27,6 +27,14 @@ function Header({ setSearch }) {
     dispatch(logout());
   };
 
+  const confirmHandler = (matchId) => {
+    
+  };
+
+  const deleteHandler = (matchId) => {
+
+  };
+
   const clickMessage = (match) => {
     const options = {
       childrenElement: () => <div />,
@@ -65,14 +73,14 @@ function Header({ setSearch }) {
                 </cite>
                 <div>
                   <Button 
-                    // onClick={() => deleteHandler(match._id)}
+                    onClick={() => confirmHandler(match._id)}
                   >
                     Confirm
                   </Button>
                   <Button
                     variant="danger"
                     className="mx-2"
-                    // onClick={() => deleteHandler(match._id)}
+                    onClick={() => deleteHandler(match._id)}
                   >
                     Delete
                   </Button>
