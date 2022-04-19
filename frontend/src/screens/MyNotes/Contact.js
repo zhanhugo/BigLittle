@@ -12,7 +12,6 @@ function Contact({ match, history }) {
     const [mentorId, setMentorId] = useState();
     const [mentorPic, setMentorPic] = useState();
     const [message, setMessage] = useState();
-    const [fbLink, setFbLink] = useState();
     const userLogin = useSelector((state) => state.userLogin);
     const { userInfo } = userLogin;
     const username = userInfo.name;
@@ -33,14 +32,14 @@ function Contact({ match, history }) {
 
     function sendEmail(e) {
         e.preventDefault();    //This is important, i'm not sure why, but the email won't send without it
-        const params = {to_name: mentorName, to_email: mentorEmail, from_name: username, message: message, fb_link: fbLink};
+        const params = {to_name: mentorName, to_email: mentorEmail, from_name: username};
         emailjs.send('service_3er6kbs', 'template_lvio19j', params, 'user_YkPUCqRE7GeUAAyPMBbJd')
             .then((result) => {
-                dispatch(requestMatch(mentorName, mentorId, mentorPic, match.params.id, message, fbLink));
+                dispatch(requestMatch(mentorName, mentorId, mentorPic, match.params.id, message));
             }, (error) => {
                 console.log(error.text);
             });
-        history.push("/explore");
+        history.push("/home");
     }
 
     return (
@@ -59,22 +58,13 @@ function Contact({ match, history }) {
                                 onChange={(e) => setMessage(e.target.value)}
                             />
                         </Form.Group>
-                        <Form.Group controlId="content">
-                            <Form.Label>Facebook Profile URL</Form.Label>
-                            <Form.Control
-                                type="content"
-                                placeholder="Enter the URL"
-                                value={fbLink}
-                                onChange={(e) => setFbLink(e.target.value)}
-                            />
-                        </Form.Group>
                         <Button variant="primary" type="submit">
                             Send
                         </Button>
                         <Button
                             className="mx-2"
                             variant="danger"
-                            onClick={() => history.push("/explore")}
+                            onClick={() => history.push("/home")}
                         >
                             Cancel
                         </Button>

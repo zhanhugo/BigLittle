@@ -1,7 +1,10 @@
 import {
-  MATCHES_LIST_REQUEST, 
-  MATCHES_LIST_SUCCESS, 
-  MATCHES_LIST_FAIL,
+  NOTIFICATIONS_LIST_REQUEST, 
+  NOTIFICATIONS_LIST_SUCCESS, 
+  NOTIFICATIONS_LIST_FAIL,
+  CHAT_LIST_REQUEST, 
+  CHAT_LIST_SUCCESS, 
+  CHAT_LIST_FAIL,
   MATCHES_CREATE_FAIL,
   MATCHES_CREATE_REQUEST,
   MATCHES_CREATE_SUCCESS,
@@ -21,13 +24,27 @@ export const matchCreateReducer = (state = {}, action) => {
   }
 };
 
-export const matchListReducer = (state = { matches: [] }, action) => {
+export const notificationsListReducer = (state = { notifications: [] }, action) => {
   switch (action.type) {
-    case MATCHES_LIST_REQUEST:
+    case NOTIFICATIONS_LIST_REQUEST:
       return { loading: true };
-    case MATCHES_LIST_SUCCESS:
-      return { loading: false, matches: action.payload };
-    case MATCHES_LIST_FAIL:
+    case NOTIFICATIONS_LIST_SUCCESS:
+      return { loading: false, notifications: action.payload };
+    case NOTIFICATIONS_LIST_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};  
+
+export const chatListReducer = (state = { chats: [] }, action) => {
+  switch (action.type) {
+    case CHAT_LIST_REQUEST:
+      return { loading: true };
+    case CHAT_LIST_SUCCESS:
+      return { loading: false, chats: action.payload };
+    case CHAT_LIST_FAIL:
       return { loading: false, error: action.payload };
 
     default:

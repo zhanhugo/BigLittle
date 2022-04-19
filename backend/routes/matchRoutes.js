@@ -2,8 +2,7 @@ import express from "express";
 import {
   getMatchesById, 
   RequestMatch, 
-  DeleteMatch, 
-  ConfirmMatch
+  UpdateMatch
 } from "../controllers/matchController.js";
 const router = express.Router();
 import { protect } from "../middleware/authMiddleware.js";
@@ -13,8 +12,7 @@ router
   .post(protect, getMatchesById);
 router
   .route("/:id")
-  .delete(protect, DeleteMatch)
-  .put(protect, ConfirmMatch);
+  .post(protect, UpdateMatch);
 router
   .route("/create")
   .post(protect, RequestMatch);

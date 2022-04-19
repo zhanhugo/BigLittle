@@ -84,7 +84,7 @@ function MyNotes({ history, search, my }) {
   };
 
   return (
-    <MainScreen title={`Welcome Back nigga ${userInfo && userInfo.name}..`}>
+    <MainScreen title={`Welcome Back ${userInfo && userInfo.name}..`}>
       <Link to="/createnote">
         <Button style={{ marginLeft: 10, marginBottom: 6 }} size="lg">
           Create new post

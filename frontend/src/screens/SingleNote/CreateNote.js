@@ -31,7 +31,7 @@ function CreateNote({ history }) {
     if (!title || !content || !category) return;
 
     resetHandler();
-    history.push("/explore");
+    history.push("/home");
   };
 
   useEffect(() => {}, []);

@@ -5,15 +5,17 @@ import Match from "../models/matchModel.js";
 //@route           POST /api/matches/
 //@access          Private
 const getMatchesById = asyncHandler(async (req, res) => {
-  const { isMentor, isMentee, confirmed } = req.body;
+  const { isMentor, isMentee, confirmed, deleted } = req.body;
   var matches;
   if (isMentor && isMentee) {
-    matches = await Match.find({ $or:[{"mentorId": req.user._id}, {"userId": req.user._id}], confirmed });
+    matches = confirmed == "both" ? await Match.find({ $or:[{"mentorId": req.user._id}, {"userId": req.user._id}], deleted }) : await Match.find({ $or:[{"mentorId": req.user._id}, {"userId": req.user._id}], confirmed, deleted });
   } else if (isMentor) {
-    matches = await Match.find({ mentorId: req.user._id, confirmed });
+    matches = confirmed == "both" ? await Match.find({ mentorId: req.user._id, deleted }) : await Match.find({ mentorId: req.user._id, confirmed, deleted });
   } else if (isMentee) {
-    matches = await Match.find({ userId: req.user._id, confirmed });
+    matches = confirmed == "both" ? await Match.find({ userId: req.user._id, deleted }) : await Match.find({ userId: req.user._id, confirmed, deleted });
   }
+
+
 
   if (matches) {
     res.json(matches);
@@ -28,8 +30,7 @@ const getMatchesById = asyncHandler(async (req, res) => {
 // @route   POST /api/matches/create
 // @access  Private
 const RequestMatch = asyncHandler(async (req, res) => {
-  console.log(req.body);
-  const { mentor, mentorId, mentorPic, postId, message, fbLink } = req.body;
+  const { mentor, mentorId, mentorPic, postId, messages } = req.body;
 
   const matchExists = await Match.findOne({ postId, userId: req.user._id });
   if (matchExists) {
@@ -40,43 +41,37 @@ const RequestMatch = asyncHandler(async (req, res) => {
     throw new Error("Pending request");
   }
 
-  const match = new Match({ mentor, mentorId, mentorPic, postId, user: req.user.name, userId: req.user._id, userPic: req.user.pic, message, fbLink, confirmed: false });
+  const match = new Match({ mentor, mentorId, mentorPic, postId, user: req.user.name, userId: req.user._id, userPic: req.user.pic, messages, confirmed: false, deleted: false });
 
   const createdMatch = await match.save();
 
   res.status(201).json(createdMatch);
 });
 
-//@description     Delete single match
-//@route           GET /api/matches/:id
-//@access          Private
-const DeleteMatch = asyncHandler(async (req, res) => {
-  const match = await Match.findById(req.params.id);
-
-  if (match) {
-    await match.remove();
-    res.json({ message: "Match Removed" });
-  } else {
-    res.status(404);
-    throw new Error("Match not Found");
-  }
-});
-
-// @desc    Confirm a match
-// @route   PUT /api/notes/:id
+// @desc    Update a match
+// @route   POST /api/notes/:id
 // @access  Private
-const ConfirmMatch = asyncHandler(async (req, res) => {
+const UpdateMatch = asyncHandler(async (req, res) => {
   const match = await Match.findById(req.params.id);
 
-  if (match) {
-    match.confirmed = true;
+  const {mentor, mentorPic, user, userPic, newMessage, confirmed, deleted} = req.body
 
-    const confirmedMatch = await match.save();
-    res.json(confirmedMatch);
+  if (match) {
+    match.mentor = mentor;
+    match.mentorPic = mentorPic;
+    match.user = user;
+    match.userPic = userPic
+    match.confirmed = confirmed;
+    match.deleted = deleted;
+    if (newMessage) {    
+      match.messages.push(newMessage);
+    }
+    const updatedMatch = await match.save();
+    res.json(updatedMatch);
   } else {
     res.status(404);
     throw new Error("Match not found");
   }
 });
   
-export { getMatchesById, RequestMatch, DeleteMatch, ConfirmMatch };
+export { getMatchesById, RequestMatch, UpdateMatch };

@@ -33,15 +33,15 @@ const matchSchema = mongoose.Schema(
             type: String,
             required: true,
         },
-        message: {
-            type: String,
-            required: true,
-        },
-        fbLink: {
-            type: String,
+        messages: {
+            type: Array,
             required: true,
         },
         confirmed: {
+            type: Boolean,
+            required: true,
+        },
+        deleted: {
             type: Boolean,
             required: true,
         }
