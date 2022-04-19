@@ -11,7 +11,6 @@ import RegisterScreen from "./screens/RegisterScreen/RegisterScreen";
 import CreateNote from "./screens/SingleNote/CreateNote";
 import { useState } from "react";
 import ProfileScreen from "./screens/ProfileScreen/ProfileScreen";
-import Chat from "./chat/Chat"
 
 function App() {
   const [search, setSearch] = useState("");
@@ -35,7 +34,6 @@ function App() {
             <MyNotes search={search} history={history} my={true}/>
           )}
         />
-        <Route path="/chat" component={Chat} />
         <Route path="/note/:id" component={SingleNote} />
         <Route path="/createnote" component={CreateNote} />
         <Route path="/contact/:id" component={Contact} />

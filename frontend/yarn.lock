@@ -4660,6 +4660,18 @@
   "resolved" "https://registry.npmjs.org/emittery/-/emittery-0.7.2.tgz"
   "version" "0.7.2"
 
+"emoji-datasource@7.0.2":
+  "integrity" "sha512-F5TTUSktTIfbjHIlaz8tjsQ8EAD0UpJtj1i5O13jQARWTddtFgam3nE1W5WgSQoqU/cuTnF1H9tK/wlCOyzfiA=="
+  "resolved" "https://registry.npmjs.org/emoji-datasource/-/emoji-datasource-7.0.2.tgz"
+  "version" "7.0.2"
+
+"emoji-js@^3.7.0":
+  "integrity" "sha512-YNJCF8DOYI1AZnkSIcJbmIN6rtXtSv5DObqzvHuGAP8VLQc15MMN+DG9rQVSfHPXGFkFub9pGvbiO4FNz5+sjg=="
+  "resolved" "https://registry.npmjs.org/emoji-js/-/emoji-js-3.7.0.tgz"
+  "version" "3.7.0"
+  dependencies:
+    "emoji-datasource" "7.0.2"
+
 "emoji-regex@^7.0.1":
   "integrity" "sha512-CwBLREIQ7LvYFB0WyRvwhq5N5qPhc6PMjD6bYggFlI5YyDgl+0vxq5VHbMOFqLg7hfWzmu8T5Z1QofhmTIhItA=="
   "resolved" "https://registry.npmjs.org/emoji-regex/-/emoji-regex-7.0.3.tgz"
@@ -7378,6 +7390,13 @@
   "resolved" "https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.1.6.tgz"
   "version" "1.1.6"
 
+"linkify-it@^2.0.3":
+  "integrity" "sha512-GnAl/knGn+i1U/wjBz3akz2stz+HrHLsxMwHQGofCDfPvlf+gDKN58UtfmUquTY4/MXeE2x7k19KQmeoZi94Iw=="
+  "resolved" "https://registry.npmjs.org/linkify-it/-/linkify-it-2.2.0.tgz"
+  "version" "2.2.0"
+  dependencies:
+    "uc.micro" "^1.0.1"
+
 "load-json-file@^2.0.0":
   "integrity" "sha1-eUfkIUmvgNaWy/eXvKq8/h/inKg="
   "resolved" "https://registry.npmjs.org/load-json-file/-/load-json-file-2.0.0.tgz"
@@ -9777,6 +9796,14 @@
   "resolved" "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz"
   "version" "3.0.4"
 
+"react-linkify@^1.0.0-alpha":
+  "integrity" "sha512-7gcIUvJkAXXttt1fmBK9cwn+1jTa4hbKLGCZ9J1U6EOkyb2/+LKL1Z28d9rtDLMnpvImlNlLPdTPooorl5cpmg=="
+  "resolved" "https://registry.npmjs.org/react-linkify/-/react-linkify-1.0.0-alpha.tgz"
+  "version" "1.0.0-alpha"
+  dependencies:
+    "linkify-it" "^2.0.3"
+    "tlds" "^1.199.0"
+
 "react-markdown@^6.0.1":
   "integrity" "sha512-JNOIU+6xrG+eOwZu9UNZxDAc1bNBCpI8mueQNx5NwZWRbSrcD25FllhKHxyUkXhpdu3r/eg1hrLKCtCq9/uIrw=="
   "resolved" "https://registry.npmjs.org/react-markdown/-/react-markdown-6.0.1.tgz"
@@ -11588,6 +11615,11 @@
   "resolved" "https://registry.npmjs.org/tiny-warning/-/tiny-warning-1.0.3.tgz"
   "version" "1.0.3"
 
+"tlds@^1.199.0":
+  "integrity" "sha512-L7UQwueHSkGxZHQBXHVmXW64oi+uqNtzFt2x6Ssk7NVnpIbw16CRs4eb/jmKOZ9t2JnqZ/b3Cfvo97lnXqKrhw=="
+  "resolved" "https://registry.npmjs.org/tlds/-/tlds-1.231.0.tgz"
+  "version" "1.231.0"
+
 "tmpl@1.0.x":
   "integrity" "sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw=="
   "resolved" "https://registry.npmjs.org/tmpl/-/tmpl-1.0.5.tgz"
@@ -11799,6 +11831,11 @@
   "integrity" "sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c="
   "resolved" "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz"
   "version" "0.0.6"
+
+"uc.micro@^1.0.1":
+  "integrity" "sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA=="
+  "resolved" "https://registry.npmjs.org/uc.micro/-/uc.micro-1.0.6.tgz"
+  "version" "1.0.6"
 
 "uncontrollable@^7.0.0":
   "integrity" "sha512-EcPYhot3uWTS3w00R32R2+vS8Vr53tttrvMj/yA1uYRhf8hbTG2GyugGqWDY0qIskxn0uTTojVd6wPYW9ZEf8Q=="

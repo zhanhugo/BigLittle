@@ -117,7 +117,7 @@ function MyNotes({ history, search, my }) {
             .reverse()
             .map((note) => (
             <Grid container item xs={getPostWidth()}>
-              <Card style={{ margin: 10 }} key={note._id}>
+              <Card style={{ margin: 10, zIndex: 0 }} key={note._id}>
                 <Card.Header style={{ display: "flex" }}>
                   <span
                     // onClick={() => ModelShow(note)}

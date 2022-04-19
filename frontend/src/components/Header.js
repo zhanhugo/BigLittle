@@ -1,4 +1,4 @@
-import {useEffect, React} from "react";
+import React, {useState, useEffect } from "react";
 import {
   Container,
   Form,
@@ -12,10 +12,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {} from "react-router-dom";
 import { logout } from "../actions/userActions";
-import { listNotifications, confirmMatch, deleteMatch, listChats } from "../actions/matchActions";
+import { listNotifications, confirmMatch, deleteMatch, listChats, messageMatch } from "../actions/matchActions";
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
 import ReactMarkdown from "react-markdown";
+import socketClient from "socket.io-client";
+import { Launcher } from "../chat_window"
 
 function Header({ setSearch }) {
   const dispatch = useDispatch();
@@ -126,8 +128,9 @@ function Header({ setSearch }) {
     }
   } 
 
-  const updateChat = () => {
-    dispatch(listChats());
+  const updateChat = async () => {
+    await dispatch(listChats());
+    setTimeout(updateChat, 30 * 1000);
   };
 
   const updateNotifications = async () => {
@@ -135,14 +138,103 @@ function Header({ setSearch }) {
     setTimeout(updateNotifications, 30 * 1000);
   };
 
+  const SERVER = "https://biglittle.herokuapp.com";
+    // const SERVER = "127.0.0.1:443";
+    
+  const [socket, setSocket] = useState(socketClient(SERVER));
+  const [channel, setChannel] = useState({});
+  const [channels, setChannels] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const configureSocket = () => {
+    socket.removeAllListeners();
+    if (userInfo) {
+      socket.on('connection', () => {
+          socket.emit('register', userInfo._id);
+      });
+
+      channels.forEach(c => {
+        socket.on('message' + c.id, message => {
+          if (channel.id == c.id) {
+            updateChannel(message);
+          }
+        });
+      });
+    }
+  }
+
+  const handleSendMessage = (message) => {
+      message.id = userInfo._id + Date.now();
+      updateChannel(message);
+      message = { to: channel.id, type: message.type, data: message.data, id: message.id };
+      dispatch(messageMatch(channel.match, message));
+      socket.emit('send-message', message);
+  }
+
+  const loadChannels = () => {
+      if (chats) {
+          setChannels(chats.map((match) => ({ 
+              match,
+              id: userInfo._id == match.mentorId ? match.userId : match.mentorId,
+              name: userInfo._id == match.mentorId ? match.user : match.mentor,
+              pic: userInfo._id == match.mentorId ? match.userPic : match.mentorPic,
+              messages: match.messages.map((message) => ({
+                  author: message.id.substring(0, 24) == userInfo._id ? "me" : "them", 
+                  type: message.type,
+                  data: message.data,
+                  id: message.id
+              })),
+              confirmed: match.confirmed
+          })));
+      }
+  }
+
+  const updateChannel = (message) => {
+      message.author = message.id.substring(0, 24) == userInfo._id ? "me" : "them";
+      if (!channel.messages) {
+          channel.messages = [message];
+      } else {
+          channel.messages.push(message);
+      }
+      setChannel(channel=> ({...channel}));
+  }
+  
   useEffect(() => {
     updateNotifications()
     updateChat()
   }, 
   [userInfo]);
 
+  useEffect(() => {
+      loadChannels()
+  }, 
+  [chats]);
+
+  useEffect(() => {
+    if (channel.id) {
+      setIsOpen(true);
+    }
+  }, 
+  [channel]);
+
+  useEffect(() => {
+    configureSocket()
+  }, 
+  [channels]);
+
   return (
     <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
+      <Launcher 
+          style={{zIndex:"20"}}
+          agentProfile={{
+              teamName: channel.name,
+              imageUrl: channel.pic
+          }}
+          isOpen={isOpen}
+          handleClick={setIsOpen}
+          onMessageWasSent={handleSendMessage}
+          messageList={channel.messages ? channel.messages : []} 
+      />
       <Container fluid>
         <Navbar.Brand href="/home">BigLittle</Navbar.Brand>
 
@@ -165,17 +257,24 @@ function Header({ setSearch }) {
             {userInfo ? (
               <>
                 <Nav.Link href="/myposts">My Posts</Nav.Link>
-                <Nav.Link href="/chat" onClick={updateChat}>
-                  <div>
-                    Chat
-                    <span
-                      className="badge badge-pill badge-dark small font-weight-light ml-1"
-                      title="Unread"
-                    >
-                      {chatsCount()}
-                    </span>
-                  </div>
-                </Nav.Link>
+                <NavDropdown
+                  title={"Chat"}
+                  id="collasible-nav-dropdown"
+                  onClick={updateChat}
+                >
+                  {channels && 
+                  channels
+                  .map((c) => (
+                    <div>
+                      <NavDropdown.Item onClick={() => setChannel(c)}>
+                        <div>
+                          <img src={c.pic} alt={""} className="circularProfilePic" />
+                          {" " + c.name}
+                        </div>
+                      </NavDropdown.Item>
+                    </div>
+                  ))}
+                </NavDropdown>
                 <NavDropdown
                   title={
                     <div>
@@ -192,23 +291,23 @@ function Header({ setSearch }) {
                   alignRight={true}
                   onClick={updateNotifications}
                 > 
-                {notifications && 
-                notifications
-                .map((match) => (
-                  <div>
-                    <NavDropdown.Item onClick={() => clickMessage(match)}>
-                      <div>
-                        <img src={match.mentorId === userInfo._id ? match.userPic : match.mentorPic} alt={""} className="circularProfilePic" />
-                        {match.mentorId === userInfo._id 
-                          ? " " + match.user + " wants to become your little!"
-                          : " " + match.mentor + " expressed ineterest in being your big!"
-                        }
-                        <br></br>
-                        Click to view this message...
-                      </div>
-                    </NavDropdown.Item>
-                  </div>
-                ))}
+                  {notifications && 
+                  notifications
+                  .map((match) => (
+                    <div>
+                      <NavDropdown.Item onClick={() => clickMessage(match)}>
+                        <div>
+                          <img src={match.mentorId === userInfo._id ? match.userPic : match.mentorPic} alt={""} className="circularProfilePic" />
+                          {match.mentorId === userInfo._id 
+                            ? " " + match.user + " wants to become your little!"
+                            : " " + match.mentor + " expressed ineterest in being your big!"
+                          }
+                          <br></br>
+                          Click to view this message...
+                        </div>
+                      </NavDropdown.Item>
+                    </div>
+                  ))}
                 </NavDropdown>
                 <NavDropdown
                   title={`${userInfo.name}`}
