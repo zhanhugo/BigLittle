@@ -26,7 +26,7 @@ function SingleNote({ match, history }) {
     if (window.confirm("Are you sure?")) {
       dispatch(deleteNoteAction(id));
     }
-    history.push("/explore");
+    history.push("/home");
   };
 
   useEffect(() => {
@@ -54,7 +54,7 @@ function SingleNote({ match, history }) {
     if (!title || !content || !category) return;
 
     resetHandler();
-    history.push("/explore");
+    history.push("/home");
   };
 
   return (

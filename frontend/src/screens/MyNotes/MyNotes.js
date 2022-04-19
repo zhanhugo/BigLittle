@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Badge, Button, Card } from "react-bootstrap";
-import { Grid, useMediaQuery, useTheme } from '@mui/material';
+import { Grid, useMediaQuery, createTheme } from '@mui/material';
 import MainScreen from "../../components/MainScreen";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
@@ -20,30 +20,37 @@ function MyNotes({ history, search, my }) {
   //   note.title.toLowerCase().includes(search.toLowerCase())
   // );
 
-  const theme = useTheme();
+  const theme = createTheme({
+    breakpoints: {
+      values: {
+        xs: 900,
+        sm: 1350,
+        md: 1800,
+        lg: 2250,
+        xl: 2700,
+      },
+    },
+  });
 
   const screenExtraLarge = useMediaQuery(theme.breakpoints.only('xl'));
   const screenLarge = useMediaQuery(theme.breakpoints.only('lg'));
   const screenMedium = useMediaQuery(theme.breakpoints.only('md'));
   const screenSmall = useMediaQuery(theme.breakpoints.only('sm'));
   const screenExtraSmall = useMediaQuery(theme.breakpoints.only('xs'));
-  const screenNarrow = useMediaQuery('(max-width:340px)');
 
   const getPostWidth = () => {
     if (screenExtraLarge) {
-      return 4;
-    } else if (screenNarrow) {
-      return 12;
+      return 2;
     } else if (screenLarge) {
-      return 6;
+      return 2;
     } else if (screenMedium) {
-      return 12;
+      return 3;
     } else if (screenSmall) {
-      return 12;
+      return 4;
     } else if (screenExtraSmall) {
-      return 12;
-    } else {
       return 6;
+    } else {
+      return 12;
     }
   }
 
@@ -84,7 +91,7 @@ function MyNotes({ history, search, my }) {
   };
 
   return (
-    <MainScreen title={`Welcome Back nigga ${userInfo && userInfo.name}..`}>
+    <MainScreen title={`Welcome Back ${userInfo && userInfo.name}..`}>
       <Link to="/createnote">
         <Button style={{ marginLeft: 10, marginBottom: 6 }} size="lg">
           Create new post

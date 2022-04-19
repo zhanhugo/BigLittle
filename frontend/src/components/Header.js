@@ -12,7 +12,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {} from "react-router-dom";
 import { logout } from "../actions/userActions";
-import { listMatches } from "../actions/matchActions";
+import { listNotifications, confirmMatch, deleteMatch, listChats } from "../actions/matchActions";
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
 import ReactMarkdown from "react-markdown";
@@ -25,6 +25,14 @@ function Header({ setSearch }) {
 
   const logoutHandler = () => {
     dispatch(logout());
+  };
+
+  const confirmHandler = (matchId) => {
+    dispatch(confirmMatch(matchId));
+  };
+
+  const deleteHandler = (matchId) => {
+    dispatch(deleteMatch(matchId));
   };
 
   const clickMessage = (match) => {
@@ -44,35 +52,39 @@ function Header({ setSearch }) {
                 fontSize: 18,
               }}
             >
-              { "Message From " + match.user}
+              { "Message From " + match.mentorId === userInfo._id ? match.user : match.mentor}
             </span>
           </Card.Header>
           <Card.Body>
             <blockquote className="blockquote mb-0">
               <ReactMarkdown>
                 {
-                  "Hello " + match.mentor + ",\n\n" + 
-                  match.user + " is interested in being your Little! Here's what they said:\n\n" + 
-                  "\t" + match.message + "\n\n" + 
-                  "Click Confirm to become their Big!"
+                  match.mentorId === userInfo._id 
+                    ? "Hello " + match.mentor + ",\n\n" + 
+                    match.user + " is interested in being your Little! Here's what they said:\n\n" + 
+                    "\t" + match.messages[0].text + "\n\n" + 
+                    "Click Confirm to become their Big!"
+                    : "Hello " + match.user + ",\n\n" + 
+                    match.mentor + " expressed interest in being your big\n\n" + 
+                    "They should now appear in your chat box!"
                 }
               </ReactMarkdown>
-              <img src={match.pic} alt={""} className="profilePic" />
               <footer className="blockquote-footer">
                 Sent on{" "}
                 <cite title="Source Title">
-                  {match.createdAt.substring(0, 10)}
+                  {match.mentorId === userInfo._id ? match.createdAt.substring(0, 10) : match.updatedAt.substring(0, 10)}
                 </cite>
                 <div>
                   <Button 
-                    // onClick={() => deleteHandler(match._id)}
+                    href='/chat'
+                    onClick={() => confirmHandler(match)}
                   >
                     Confirm
                   </Button>
                   <Button
                     variant="danger"
                     className="mx-2"
-                    // onClick={() => deleteHandler(match._id)}
+                    onClick={() => deleteHandler(match)}
                   >
                     Delete
                   </Button>
@@ -87,32 +99,52 @@ function Header({ setSearch }) {
   
     confirmAlert(options)
   }
-  
-  const matchList = useSelector((state) => state.matchList);
-  const { loading, error, matches } = matchList;
 
-  const inboxCount = () => {
-    if (!error && matches) {
-      return matches.length;
-    } else {
+  const chatList = useSelector((state) => state.chatList);
+  const { cLoading, cError, chats } = chatList;
+
+  const chatsCount = () => {
+    if (!cError && chats) {
+      return chats.length;
+    } else if (cLoading) {
       return "loading..";
+    } else {
+      return 0;
     }
   } 
 
-  const updateInbox = async () => {
-    await dispatch(listMatches(true, false, false));
-    setTimeout(updateInbox, 30 * 1000);
+  const notificationsList = useSelector((state) => state.notificationsList);
+  const { loading, error, notifications } = notificationsList;
+
+  const notificationsCount = () => {
+    if (!error && notifications) {
+      return notifications.length;
+    } else if (loading) {
+      return "loading..";
+    } else {
+      return 0;
+    }
+  } 
+
+  const updateChat = () => {
+    dispatch(listChats());
+  };
+
+  const updateNotifications = async () => {
+    await dispatch(listNotifications());
+    setTimeout(updateNotifications, 30 * 1000);
   };
 
   useEffect(() => {
-    updateInbox()
+    updateNotifications()
+    updateChat()
   }, 
-  []);
+  [userInfo]);
 
   return (
     <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
       <Container fluid>
-        <Navbar.Brand href="/explore">BigLittle</Navbar.Brand>
+        <Navbar.Brand href="/home">BigLittle</Navbar.Brand>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -133,30 +165,44 @@ function Header({ setSearch }) {
             {userInfo ? (
               <>
                 <Nav.Link href="/myposts">My Posts</Nav.Link>
+                <Nav.Link href="/chat" onClick={updateChat}>
+                  <div>
+                    Chat
+                    <span
+                      className="badge badge-pill badge-dark small font-weight-light ml-1"
+                      title="Unread"
+                    >
+                      {chatsCount()}
+                    </span>
+                  </div>
+                </Nav.Link>
                 <NavDropdown
                   title={
                     <div>
-                      Inbox
+                      Notification
                       <span
                         className="badge badge-pill badge-dark small font-weight-light ml-1"
                         title="Unread"
                       >
-                        {inboxCount()}
+                        {notificationsCount()}
                       </span>
                     </div>
                   }
                   id="collasible-nav-dropdown"
                   alignRight={true}
-                  onClick={updateInbox}
+                  onClick={updateNotifications}
                 > 
-                {matches && 
-                matches
+                {notifications && 
+                notifications
                 .map((match) => (
                   <div>
                     <NavDropdown.Item onClick={() => clickMessage(match)}>
                       <div>
-                        <img src={match.userPic} alt={""} className="circularProfilePic" />
-                        {" " + match.user + " wants to become your little!"}
+                        <img src={match.mentorId === userInfo._id ? match.userPic : match.mentorPic} alt={""} className="circularProfilePic" />
+                        {match.mentorId === userInfo._id 
+                          ? " " + match.user + " wants to become your little!"
+                          : " " + match.mentor + " expressed ineterest in being your big!"
+                        }
                         <br></br>
                         Click to view this message...
                       </div>
@@ -180,7 +226,7 @@ function Header({ setSearch }) {
                     My Profile
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={logoutHandler}>
+                  <NavDropdown.Item href="/" onClick={logoutHandler}>
                     Logout
                   </NavDropdown.Item>
                 </NavDropdown>

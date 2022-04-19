@@ -17,8 +17,6 @@ function CreateNote({ history }) {
   const noteCreate = useSelector((state) => state.noteCreate);
   const { loading, error, note } = noteCreate;
 
-  console.log(note);
-
   const resetHandler = () => {
     setTitle("");
     setCategory("");
@@ -31,7 +29,7 @@ function CreateNote({ history }) {
     if (!title || !content || !category) return;
 
     resetHandler();
-    history.push("/explore");
+    history.push("/home");
   };
 
   useEffect(() => {}, []);
