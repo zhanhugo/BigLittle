@@ -62,11 +62,11 @@ function Header({ setSearch }) {
                   match.mentorId === userInfo._id 
                     ? "Hello " + match.mentor + ",\n\n" + 
                     match.user + " is interested in being your Little! Here's what they said:\n\n" + 
-                    "\t" + match.message + "\n\n" + 
+                    "\t" + match.messages[0].text + "\n\n" + 
                     "Click Confirm to become their Big!"
                     : "Hello " + match.user + ",\n\n" + 
                     match.mentor + " expressed interest in being your big\n\n" + 
-                    "Please reach out to them at"
+                    "They should now appear in your chat box!"
                 }
               </ReactMarkdown>
               <footer className="blockquote-footer">
@@ -76,6 +76,7 @@ function Header({ setSearch }) {
                 </cite>
                 <div>
                   <Button 
+                    href='/chat'
                     onClick={() => confirmHandler(match)}
                   >
                     Confirm
@@ -225,7 +226,7 @@ function Header({ setSearch }) {
                     My Profile
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={logoutHandler}>
+                  <NavDropdown.Item href="/" onClick={logoutHandler}>
                     Logout
                   </NavDropdown.Item>
                 </NavDropdown>

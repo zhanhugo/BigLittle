@@ -15,6 +15,6 @@ router
   .post(protect, UpdateMatch);
 router
   .route("/create")
-  .post(protect, RequestMatch);
+  .put(protect, RequestMatch);
 
 export default router;

@@ -22,12 +22,10 @@ const getMatchesById = asyncHandler(async (req, res) => {
   } else {
     res.status(404).json({ message: "Matches not found" });
   }
-
-  res.json(matches);
 });
 
 // @desc    Create match request
-// @route   POST /api/matches/create
+// @route   PUT /api/matches/create
 // @access  Private
 const RequestMatch = asyncHandler(async (req, res) => {
   const { mentor, mentorId, mentorPic, postId, messages } = req.body;
