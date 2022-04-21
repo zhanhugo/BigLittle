@@ -15,7 +15,7 @@ const getMatchesById = asyncHandler(async (req, res) => {
     matches = confirmed == "both" ? await Match.find({ userId: req.user._id, deleted }) : await Match.find({ userId: req.user._id, confirmed, deleted });
   }
 
-
+  matches.sort((a, b) => -(a.messages[a.messages.length - 1].id.substring(24) - b.messages[b.messages.length - 1].id.substring(24)));
 
   if (matches) {
     res.json(matches);

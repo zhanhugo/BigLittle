@@ -120,18 +120,19 @@ function Header({ setSearch }) {
 
   const notificationsCount = () => {
     if (!error && notifications) {
+      if (notifications.length != currNotificationsCount) {
+        setCurrNotificationsCount(notifications.length);
+      }
       return notifications.length;
-    } else if (loading) {
-      return "loading..";
-    } else {
-      return 0;
     }
+    return currNotificationsCount;
   } 
 
   const updateChat = async () => {
     await dispatch(listChats());
-    setTimeout(updateChat, 30 * 1000);
   };
+
+  const [currNotificationsCount, setCurrNotificationsCount] = useState(notifications ? notifications.length : 0);
 
   const updateNotifications = async () => {
     await dispatch(listNotifications());
@@ -145,6 +146,10 @@ function Header({ setSearch }) {
   const [channel, setChannel] = useState({});
   const [channels, setChannels] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  const toggleChat = () => {
+    setIsOpen(!isOpen);
+  };
 
   const configureSocket = () => {
     socket.removeAllListeners();
@@ -231,7 +236,7 @@ function Header({ setSearch }) {
               imageUrl: channel.pic
           }}
           isOpen={isOpen}
-          handleClick={setIsOpen}
+          handleClick={toggleChat}
           onMessageWasSent={handleSendMessage}
           messageList={channel.messages ? channel.messages : []} 
       />
@@ -262,7 +267,7 @@ function Header({ setSearch }) {
                   id="collasible-nav-dropdown"
                   onClick={updateChat}
                 >
-                  {channels && 
+                  {!cError && !cLoading && channels && 
                   channels
                   .map((c) => (
                     <div>
