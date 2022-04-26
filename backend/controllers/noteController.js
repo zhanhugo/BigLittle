@@ -28,13 +28,13 @@ const getNoteById = asyncHandler(async (req, res) => {
 //@route           GET /api/notes/create
 //@access          Private
 const CreateNote = asyncHandler(async (req, res) => {
-  const { title, content, category } = req.body;
+  const { headline, aboutYou, education, relevantExperience, category } = req.body;
 
-  if (!title || !content || !category) {
+  if (!headline || !aboutYou || !category) {
     res.status(400);
     throw new Error("Please Fill all the feilds");
   } else {
-    const note = new Note({ user: req.user._id, name: req.user.name, email: req.user.email, pic: req.user.pic, title, content, category });
+    const note = new Note({ user: req.user._id, name: req.user.name, email: req.user.email, pic: req.user.pic, headline, aboutYou, education, relevantExperience, category });
 
     const createdNote = await note.save();
 
@@ -66,7 +66,7 @@ const DeleteNote = asyncHandler(async (req, res) => {
 // @route   PUT /api/notes/:id
 // @access  Private
 const UpdateNote = asyncHandler(async (req, res) => {
-  const { title, content, category } = req.body;
+  const { headline, aboutYou, education, relevantExperience, category } = req.body;
 
   const note = await Note.findById(req.params.id);
 
@@ -76,9 +76,11 @@ const UpdateNote = asyncHandler(async (req, res) => {
   }
 
   if (note) {
-    note.title = title;
-    note.content = content;
-    note.category = category;
+    note.headline = headline
+    note.aboutYou = aboutYou
+    note.education = education 
+    note.relevantExperience = relevantExperience 
+    note.category = category
 
     const updatedNote = await note.save();
     res.json(updatedNote);

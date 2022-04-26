@@ -6,12 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteNoteAction, updateNoteAction } from "../../actions/notesActions";
 import ErrorMessage from "../../components/ErrorMessage";
 import Loading from "../../components/Loading";
-import ReactMarkdown from "react-markdown";
 
 function SingleNote({ match, history }) {
-  const [title, setTitle] = useState();
-  const [content, setContent] = useState();
-  const [category, setCategory] = useState();
+  const [headline, setHeadline] = useState("");
+  const [aboutYou, setAboutYou] = useState("");
+  const [education, setEducation] = useState("");
+  const [relevantExperience, setRelevantExperience] = useState("");
+  const [category, setCategory] = useState("");
   const [date, setDate] = useState("");
 
   const dispatch = useDispatch();
@@ -33,34 +34,38 @@ function SingleNote({ match, history }) {
     const fetching = async () => {
       const { data } = await axios.get(`/api/notes/${match.params.id}`);
 
-      setTitle(data.title);
-      setContent(data.content);
+      setHeadline(data.headline);
+      setAboutYou(data.aboutYou);
+      setEducation(data.education);
+      setRelevantExperience(data.relevantExperience);
       setCategory(data.category);
-      setDate(data.updatedAt);
+      setDate(data.updatedAt)
     };
 
     fetching();
   }, [match.params.id, date]);
 
   const resetHandler = () => {
-    setTitle("");
+    setHeadline("");
+    setAboutYou("");
+    setEducation("");
+    setRelevantExperience("");
     setCategory("");
-    setContent("");
   };
 
   const updateHandler = (e) => {
     e.preventDefault();
-    dispatch(updateNoteAction(match.params.id, title, content, category));
-    if (!title || !content || !category) return;
+    dispatch(updateNoteAction(match.params.id, headline, aboutYou, education, relevantExperience, category));
+    if (!headline || !aboutYou || !category) return;
 
     resetHandler();
     history.push("/home");
   };
 
   return (
-    <MainScreen title="Edit Note">
+    <MainScreen title="Edit your Post">
       <Card>
-        <Card.Header>Edit your Note</Card.Header>
+        <Card.Header>Edit your Post</Card.Header>
         <Card.Body>
           <Form onSubmit={updateHandler}>
             {loadingDelete && <Loading />}
@@ -69,53 +74,64 @@ function SingleNote({ match, history }) {
               <ErrorMessage variant="danger">{errorDelete}</ErrorMessage>
             )}
             <Form.Group controlId="title">
-              <Form.Label>Title</Form.Label>
+              <Form.Label>Headline</Form.Label>
               <Form.Control
                 type="title"
+                value={headline}
                 placeholder="Enter the title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => setHeadline(e.target.value)}
               />
             </Form.Group>
 
             <Form.Group controlId="content">
-              <Form.Label>Content</Form.Label>
+              <Form.Label>About You</Form.Label>
               <Form.Control
                 as="textarea"
+                value={aboutYou}
                 placeholder="Enter the content"
                 rows={4}
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={(e) => setAboutYou(e.target.value)}
               />
             </Form.Group>
-            {content && (
-              <Card>
-                <Card.Header>Note Preview</Card.Header>
-                <Card.Body>
-                  <ReactMarkdown>{content}</ReactMarkdown>
-                </Card.Body>
-              </Card>
-            )}
-
+            <Form.Group controlId="content">
+              <Form.Label>Education</Form.Label>
+              <Form.Control
+                as="textarea"
+                value={education}
+                placeholder="Enter the content"
+                rows={4}
+                onChange={(e) => setEducation(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="content">
+              <Form.Label>Relevant Experience</Form.Label>
+              <Form.Control
+                as="textarea"
+                value={relevantExperience}
+                placeholder="Enter the content"
+                rows={4}
+                onChange={(e) => setRelevantExperience(e.target.value)}
+              />
+            </Form.Group>
             <Form.Group controlId="content">
               <Form.Label>Category</Form.Label>
               <Form.Control
                 type="content"
-                placeholder="Enter the Category"
                 value={category}
+                placeholder="Enter the Category"
                 onChange={(e) => setCategory(e.target.value)}
               />
             </Form.Group>
             {loading && <Loading size={50} />}
             <Button variant="primary" type="submit">
-              Update Note
+              Update your Post
             </Button>
             <Button
               className="mx-2"
               variant="danger"
               onClick={() => deleteHandler(match.params.id)}
             >
-              Delete Note
+              Delete your Post
             </Button>
           </Form>
         </Card.Body>

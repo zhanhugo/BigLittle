@@ -14,13 +14,21 @@ const noteSchema = mongoose.Schema(
       type: String,
       required: true
     },
-    title: {
+    headline: {
       type: String,
       required: true,
     },
-    content: {
+    aboutYou: {
       type: String,
       required: true,
+    },
+    education: {
+      type: String,
+      required: false,
+    },
+    relevantExperience: {
+      type: String,
+      required: false,
     },
     category: {
       type: String,

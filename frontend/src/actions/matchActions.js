@@ -114,7 +114,7 @@ export const requestMatch = (mentor, mentorId, mentorPic, postId, message) => as
 
       const { data } = await axios.put(
         `/api/matches/create`,
-        { mentor, mentorId, mentorPic, postId, messages: [{ senderName: userInfo.name, to: mentorId, text: message, id: userInfo._id + Date.now() }] },
+        { mentor, mentorId, mentorPic, postId, messages: [{ senderName: userInfo.name, to: mentorId, type: "text", data: { text: message }, id: userInfo._id + Date.now() }] },
         config
       );
   

@@ -15,6 +15,7 @@ import {
 } from "./reducers/userReducers";
 import {
   matchCreateReducer,
+  matchConfirmReducer,
   notificationsListReducer,
   chatListReducer
 } from "./reducers/matchReducers";
@@ -30,7 +31,8 @@ const reducer = combineReducers({
   userUpdate: userUpdateReducer,
   matchCreate: matchCreateReducer,
   notificationsList: notificationsListReducer,
-  chatList: chatListReducer
+  chatList: chatListReducer,
+  matchConfirm: matchConfirmReducer
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

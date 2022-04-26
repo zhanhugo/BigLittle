@@ -29,18 +29,18 @@ function Header({ setSearch }) {
     dispatch(logout());
   };
 
-  const confirmHandler = (matchId) => {
-    dispatch(confirmMatch(matchId));
+  const confirmHandler = (match) => {
+    dispatch(confirmMatch(match));
   };
 
-  const deleteHandler = (matchId) => {
-    dispatch(deleteMatch(matchId));
+  const deleteHandler = (match) => {
+    dispatch(deleteMatch(match));
   };
 
   const clickMessage = (match) => {
     const options = {
       childrenElement: () => <div />,
-      customUI: () => (
+      customUI: ({ onClose }) => (
         <Card style={{ margin: 10 }} key={match._id}>
           <Card.Header style={{ display: "flex" }}>
             <span
@@ -78,15 +78,20 @@ function Header({ setSearch }) {
                 </cite>
                 <div>
                   <Button 
-                    href='/chat'
-                    onClick={() => confirmHandler(match)}
+                    onClick={() => {
+                      confirmHandler(match); 
+                      onClose();
+                    }}
                   >
                     Confirm
                   </Button>
                   <Button
                     variant="danger"
                     className="mx-2"
-                    onClick={() => deleteHandler(match)}
+                    onClick={() => {
+                      deleteHandler(match);
+                      onClose();
+                    }}
                   >
                     Delete
                   </Button>
@@ -115,12 +120,15 @@ function Header({ setSearch }) {
     }
   } 
 
+  const matchConfirm = useSelector((state) => state.matchConfirm);
+  const { conLoading, conError, confirmedMatch } = matchConfirm;
+
   const notificationsList = useSelector((state) => state.notificationsList);
   const { loading, error, notifications } = notificationsList;
 
   const notificationsCount = () => {
     if (!error && notifications) {
-      if (notifications.length != currNotificationsCount) {
+      if (notifications.length !== currNotificationsCount) {
         setCurrNotificationsCount(notifications.length);
       }
       return notifications.length;
@@ -148,6 +156,9 @@ function Header({ setSearch }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleChat = () => {
+    if (!isOpen) {
+      updateChat();
+    }
     setIsOpen(!isOpen);
   };
 
@@ -160,7 +171,7 @@ function Header({ setSearch }) {
 
       channels.forEach(c => {
         socket.on('message' + c.id, message => {
-          if (channel.id == c.id) {
+          if (channel.id === c.id) {
             updateChannel(message);
           }
         });
@@ -180,11 +191,11 @@ function Header({ setSearch }) {
       if (chats) {
           setChannels(chats.map((match) => ({ 
               match,
-              id: userInfo._id == match.mentorId ? match.userId : match.mentorId,
-              name: userInfo._id == match.mentorId ? match.user : match.mentor,
-              pic: userInfo._id == match.mentorId ? match.userPic : match.mentorPic,
+              id: userInfo._id === match.mentorId ? match.userId : match.mentorId,
+              name: userInfo._id === match.mentorId ? match.user : match.mentor,
+              pic: userInfo._id === match.mentorId ? match.userPic : match.mentorPic,
               messages: match.messages.map((message) => ({
-                  author: message.id.substring(0, 24) == userInfo._id ? "me" : "them", 
+                  author: message.id.substring(0, 24) === userInfo._id ? "me" : "them", 
                   type: message.type,
                   data: message.data,
                   id: message.id
@@ -195,7 +206,7 @@ function Header({ setSearch }) {
   }
 
   const updateChannel = (message) => {
-      message.author = message.id.substring(0, 24) == userInfo._id ? "me" : "them";
+      message.author = message.id.substring(0, 24) === userInfo._id ? "me" : "them";
       if (!channel.messages) {
           channel.messages = [message];
       } else {
@@ -208,7 +219,7 @@ function Header({ setSearch }) {
     updateNotifications()
     updateChat()
   }, 
-  [userInfo]);
+  [userInfo, confirmedMatch]);
 
   useEffect(() => {
       loadChannels()
@@ -216,7 +227,7 @@ function Header({ setSearch }) {
   [chats]);
 
   useEffect(() => {
-    if (channel.id) {
+    if (channel.id && confirmedMatch && confirmedMatch.userId === channel.id) {
       setIsOpen(true);
     }
   }, 
@@ -224,6 +235,9 @@ function Header({ setSearch }) {
 
   useEffect(() => {
     configureSocket()
+    if (channels.length > 0) {
+      setChannel(channels[0]);
+    }
   }, 
   [channels]);
 
@@ -261,7 +275,7 @@ function Header({ setSearch }) {
           <Nav>
             {userInfo ? (
               <>
-                <Nav.Link href="/myposts">My Posts</Nav.Link>
+                <Nav.Link href="/myposts">My Pro</Nav.Link>
                 <NavDropdown
                   title={"Chat"}
                   id="collasible-nav-dropdown"
@@ -271,7 +285,10 @@ function Header({ setSearch }) {
                   channels
                   .map((c) => (
                     <div>
-                      <NavDropdown.Item onClick={() => setChannel(c)}>
+                      <NavDropdown.Item onClick={() => {
+                        setChannel(c);
+                        setIsOpen(true);
+                      }}>
                         <div>
                           <img src={c.pic} alt={""} className="circularProfilePic" />
                           {" " + c.name}

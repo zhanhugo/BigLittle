@@ -8,6 +8,9 @@ import {
   MATCHES_CREATE_FAIL,
   MATCHES_CREATE_REQUEST,
   MATCHES_CREATE_SUCCESS,
+  MATCHES_CONFIRM_FAIL,
+  MATCHES_CONFIRM_REQUEST,
+  MATCHES_CONFIRM_SUCCESS,
 } from "../constants/matchConstants";
 
 export const matchCreateReducer = (state = {}, action) => {
@@ -17,6 +20,20 @@ export const matchCreateReducer = (state = {}, action) => {
     case MATCHES_CREATE_SUCCESS:
       return { loading: false, success: true };
     case MATCHES_CREATE_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const matchConfirmReducer = (state = {}, action) => {
+  switch (action.type) {
+    case MATCHES_CONFIRM_REQUEST:
+      return { loading: true };
+    case MATCHES_CONFIRM_SUCCESS:
+      return { loading: false, confirmedMatch: action.payload };
+    case MATCHES_CONFIRM_FAIL:
       return { loading: false, error: action.payload };
 
     default:

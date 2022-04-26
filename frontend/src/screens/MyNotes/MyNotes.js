@@ -3,7 +3,6 @@ import { Badge, Button, Card } from "react-bootstrap";
 import { Grid, useMediaQuery, createTheme } from '@mui/material';
 import MainScreen from "../../components/MainScreen";
 import { Link } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
 
 import { useDispatch, useSelector } from "react-redux";
 import { deleteNoteAction, listNotes } from "../../actions/notesActions";
@@ -110,8 +109,10 @@ function MyNotes({ history, search, my }) {
               (!my || filteredNote.user === userInfo._id) &&
               (
                 filteredNote.name.toLowerCase().includes(search.toLowerCase()) ||
-                filteredNote.title.toLowerCase().includes(search.toLowerCase()) ||
-                filteredNote.category.toLowerCase().includes(search.toLowerCase())
+                filteredNote.education.toLowerCase().includes(search.toLowerCase()) ||
+                filteredNote.category.toLowerCase().includes(search.toLowerCase()) ||
+                filteredNote.relevantExperience.toLowerCase().includes(search.toLowerCase()) ||
+                filteredNote.headline.toLowerCase().includes(search.toLowerCase())
               )
             )
             .reverse()
@@ -130,7 +131,8 @@ function MyNotes({ history, search, my }) {
                       fontSize: 18,
                     }}
                   >
-                    {note.name + ": " + note.title}
+                    <b>{note.name}</b>
+                    {" | " + note.headline}
                   </span>
                     { userInfo !== undefined && note.user === userInfo._id ?
                       <div>
@@ -151,11 +153,18 @@ function MyNotes({ history, search, my }) {
                     <Card.Body>
                       <h4>
                         <Badge variant="success">
-                          Category - {note.category}
+                          Category: {note.category}
                         </Badge>
+                        {" "}
+                        {note.education &&                         
+                          <Badge variant="warning">
+                            School: {note.education}
+                          </Badge>
+                        }
                       </h4>
+
                       <blockquote className="blockquote mb-0">
-                        <ReactMarkdown>{note.content}</ReactMarkdown>
+                        <i>"{note.aboutYou}"</i>
                         <img src={note.pic} alt={""} className="profilePic" />
                         <footer className="blockquote-footer">
                           Created on{" "}

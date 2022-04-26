@@ -5,11 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { createNoteAction } from "../../actions/notesActions";
 import Loading from "../../components/Loading";
 import ErrorMessage from "../../components/ErrorMessage";
-import ReactMarkdown from "react-markdown";
 
 function CreateNote({ history }) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [headline, setHeadline] = useState("");
+  const [aboutYou, setAboutYou] = useState("");
+  const [education, setEducation] = useState("");
+  const [relevantExperience, setRelevantExperience] = useState("");
   const [category, setCategory] = useState("");
 
   const dispatch = useDispatch();
@@ -18,15 +19,17 @@ function CreateNote({ history }) {
   const { loading, error, note } = noteCreate;
 
   const resetHandler = () => {
-    setTitle("");
+    setHeadline("");
+    setAboutYou("");
+    setEducation("");
+    setRelevantExperience("");
     setCategory("");
-    setContent("");
   };
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(createNoteAction(title, content, category));
-    if (!title || !content || !category) return;
+    dispatch(createNoteAction(headline, aboutYou, education, relevantExperience, category));
+    if (!headline || !aboutYou || !category) return;
 
     resetHandler();
     history.push("/home");
@@ -35,43 +38,54 @@ function CreateNote({ history }) {
   useEffect(() => {}, []);
 
   return (
-    <MainScreen title="Create a Note">
+    <MainScreen title="Create a Post">
       <Card>
-        <Card.Header>Create a new Note</Card.Header>
+        <Card.Header>Create a Post</Card.Header>
         <Card.Body>
           <Form onSubmit={submitHandler}>
             {error && <ErrorMessage variant="danger">{error}</ErrorMessage>}
             <Form.Group controlId="title">
-              <Form.Label>Title</Form.Label>
+              <Form.Label>Headline*</Form.Label>
               <Form.Control
                 type="title"
-                value={title}
+                value={headline}
                 placeholder="Enter the title"
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => setHeadline(e.target.value)}
               />
             </Form.Group>
 
             <Form.Group controlId="content">
-              <Form.Label>Content</Form.Label>
+              <Form.Label>About You*</Form.Label>
               <Form.Control
                 as="textarea"
-                value={content}
+                value={aboutYou}
                 placeholder="Enter the content"
                 rows={4}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={(e) => setAboutYou(e.target.value)}
               />
             </Form.Group>
-            {content && (
-              <Card>
-                <Card.Header>Note Preview</Card.Header>
-                <Card.Body>
-                  <ReactMarkdown>{content}</ReactMarkdown>
-                </Card.Body>
-              </Card>
-            )}
-
             <Form.Group controlId="content">
-              <Form.Label>Category</Form.Label>
+              <Form.Label>Education</Form.Label>
+              <Form.Control
+                as="textarea"
+                value={education}
+                placeholder="Enter the content"
+                rows={4}
+                onChange={(e) => setEducation(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="content">
+              <Form.Label>Relevant Experience</Form.Label>
+              <Form.Control
+                as="textarea"
+                value={relevantExperience}
+                placeholder="Enter the content"
+                rows={4}
+                onChange={(e) => setRelevantExperience(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="content">
+              <Form.Label>Category*</Form.Label>
               <Form.Control
                 type="content"
                 value={category}
@@ -81,7 +95,7 @@ function CreateNote({ history }) {
             </Form.Group>
             {loading && <Loading size={50} />}
             <Button type="submit" variant="primary">
-              Create Note
+              Create Post
             </Button>
             <Button className="mx-2" onClick={resetHandler} variant="danger">
               Reset Feilds
